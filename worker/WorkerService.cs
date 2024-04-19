@@ -16,17 +16,27 @@ namespace worker
         public WorkerService(IHttpClientFactory httpClientFactory)
         {
             httpClient = httpClientFactory.CreateClient();
-            httpClient.BaseAddress = new Uri("http://localhost:5000/");
+            httpClient.BaseAddress = new Uri("http://localhost:8090/");
         }
 
         public async Task Execute()
         {
             while (true)
             {
-                await httpClient.PostAsync("action/create-user", null);
-                Console.WriteLine("action/create-user called");
-                var rnd = new Random();
-                Thread.Sleep(rnd.Next(1000, 7000));
+                try
+                {
+                    await httpClient.PostAsync("action/create-user", null);
+                    Console.WriteLine("Success: action/create-user");
+                }
+                catch (System.Exception)
+                {
+                    Console.WriteLine("Failed: action/create-user");
+                }
+                finally
+                {
+                    var rnd = new Random();
+                    Thread.Sleep(rnd.Next(10000, 70000));
+                }
             }
         }
     }

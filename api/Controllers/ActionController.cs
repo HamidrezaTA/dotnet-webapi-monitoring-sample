@@ -1,3 +1,4 @@
+using System.Diagnostics.Metrics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;
@@ -7,15 +8,19 @@ namespace api.Controllers;
 public class ActionController : ControllerBase
 {
     private readonly ILogger<ActionController> _logger;
+    private readonly IMeterGatherService _meterGatherService;
 
-    public ActionController(ILogger<ActionController> logger)
+    public ActionController(ILogger<ActionController> logger,
+                            IMeterGatherService meterGatherService)
     {
         _logger = logger;
+        _meterGatherService = meterGatherService;
     }
 
     [HttpPost("create-user")]
     public long UserCreation()
     {
+        _meterGatherService.UserCreated();
         var rnd = new Random();
         return rnd.Next();
     }
